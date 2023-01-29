@@ -7,20 +7,9 @@ final log = Logger(appTitle);
 
 void main() {
   initLogging();
-  runApp(AppBootstrapper(AppThemeState(), AppDomainState()));
-}
-
-class AppBootstrapper extends StatelessWidget {
-  final AppThemeState themeState;
-  final AppDomainState domainState;
-
-  const AppBootstrapper(this.themeState, this.domainState, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    log.info("building AppBootstrapper");
-    return bind(themeState, bind(domainState, const App()));
-  }
+  final themeState = AppThemeState();
+  final domainState = AppDomainState();
+  runApp(bind(themeState, bind(domainState, const App())));
 }
 
 class App extends StatelessWidget {
