@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutteridoo/state_binding.dart';
 import 'package:logging/logging.dart';
@@ -129,8 +131,6 @@ AppBar createAppBar(BuildContext context, String title) {
   log.info("Created app bar");
   return AppBar(
     title: Text(title),
-    // backgroundColor: Theme.of(context).colorScheme.background,
-    //  foregroundColor: Theme.of(context).colorScheme.onBackground,
   );
 }
 
