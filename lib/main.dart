@@ -30,11 +30,14 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     log.info("building App");
 
-    return observe<AppThemeState>((theme) => MaterialApp(
-          title: appTitle,
-          theme: theme.theme,
-          home: const AppUi(),
-        ));
+    return observe<AppThemeState>((theme) {
+      log.info("building MaterialApp");
+      return MaterialApp(
+        title: appTitle,
+        theme: theme.theme,
+        home: const AppUi(),
+      );
+    });
   }
 }
 
@@ -96,22 +99,28 @@ class AppUi extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             makeText(),
-            observe<AppDomainState>((state) => Text(
+            observe<AppDomainState>((state) =>
+                Text(
                   '${state.counter}',
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .headlineMedium,
                 )),
             ElevatedButton(
               onPressed: modify<AppThemeState>(context, (d) => d.toggle()),
               child: const Text("Change material design version"),
             ),
-            observe<AppThemeState>((theme) => Text(
-                "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
+            observe<AppThemeState>((theme) =>
+                Text(
+                    "using brightness=${theme.theme.brightness}, matv=${theme
+                        .theme.useMaterial3 ? "3" : "2"}")),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed:
-            modify<AppDomainState>(context, (state) => state.increment()),
+        modify<AppDomainState>(context, (state) => state.increment()),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
