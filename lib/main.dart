@@ -48,22 +48,6 @@ class AppThemeState extends ChangeNotifier {
     ThemeData.dark().copyWith(useMaterial3: true),
     ThemeData.light().copyWith(useMaterial3: false),
     ThemeData.dark().copyWith(useMaterial3: false),
-    ThemeData.light().copyWith(useMaterial3: true),
-    ThemeData.dark().copyWith(useMaterial3: true),
-    ThemeData.light().copyWith(useMaterial3: false),
-    ThemeData.dark().copyWith(useMaterial3: false),
-    ThemeData.light().copyWith(useMaterial3: true),
-    ThemeData.dark().copyWith(useMaterial3: true),
-    ThemeData.light().copyWith(useMaterial3: false),
-    ThemeData.dark().copyWith(useMaterial3: false),
-    ThemeData.light().copyWith(useMaterial3: true),
-    ThemeData.dark().copyWith(useMaterial3: true),
-    ThemeData.light().copyWith(useMaterial3: false),
-    ThemeData.dark().copyWith(useMaterial3: false),
-    ThemeData.light().copyWith(useMaterial3: true),
-    ThemeData.dark().copyWith(useMaterial3: true),
-    ThemeData.light().copyWith(useMaterial3: false),
-    ThemeData.dark().copyWith(useMaterial3: false),
   ];
 
   ThemeData _theme = ThemeData.light().copyWith(useMaterial3: true);
