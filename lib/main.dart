@@ -7,9 +7,7 @@ final log = Logger(appTitle);
 
 void main() {
   initLogging();
-  final themeState = AppThemeState();
-  final domainState = AppDomainState();
-  runApp(bind(themeState, bind(domainState, AppUi())));
+  runApp(bind(AppThemeState(), bind(AppDomainState(), AppUi())));
 }
 
 class AppThemeState extends ChangeNotifier {
