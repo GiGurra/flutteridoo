@@ -89,13 +89,6 @@ class AppDomainState extends ChangeNotifier {
   }
 }
 
-void initLogging() {
-  Logger.root.onRecord.listen((record) {
-    // ignore: avoid_print
-    print('${record.level.name}: ${record.time}: ${record.message}');
-  });
-}
-
 class AppUi extends StatelessWidget {
   AppUi({super.key}) {
     log.info("Made new instance $this@${identityHashCode(this)}");
@@ -133,4 +126,11 @@ class AppUi extends StatelessWidget {
       ),
     );
   }
+}
+
+void initLogging() {
+  Logger.root.onRecord.listen((record) {
+    // ignore: avoid_print
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
 }
