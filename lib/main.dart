@@ -7,14 +7,67 @@ final log = Logger(appTitle);
 
 void main() {
   initLogging();
-  runApp(MaterialApp(
-    title: appTitle,
-    //theme: ThemeData(),
-    home: bind(AppState(), AppUi.new),
-  ));
+  final themeState = AppThemeState();
+  final domainState = AppDomainState();
+  runApp(AppBootstrapper(themeState, domainState));
 }
 
-class AppState extends ChangeNotifier {
+class AppBootstrapper extends StatelessWidget {
+  final AppThemeState themeState;
+  final AppDomainState domainState;
+
+  const AppBootstrapper(this.themeState, this.domainState, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    log.info("building AppBootstrapper");
+    return bind(themeState, () => bind(domainState, App.new));
+  }
+}
+
+class App extends StatelessWidget {
+  const App({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    log.info("building App");
+
+    return observe<AppThemeState>((theme) => MaterialApp(
+          title: appTitle,
+          theme: theme.theme,
+          home: const AppUi(),
+        ));
+  }
+}
+
+class AppThemeState extends ChangeNotifier {
+  final List<ThemeData> _availableThemes = [
+    ThemeData.light().copyWith(useMaterial3: true),
+    ThemeData.dark().copyWith(useMaterial3: true),
+    ThemeData.light().copyWith(useMaterial3: false),
+    ThemeData.dark().copyWith(useMaterial3: false),
+  ];
+
+  ThemeData _theme = ThemeData.light().copyWith(useMaterial3: true);
+
+  ThemeData get theme => _theme;
+
+  void _set(ThemeData newTheme) {
+    if (_theme != newTheme) {
+      _theme = newTheme;
+      notifyListeners();
+    }
+  }
+
+  void toggle() {
+    log.info("Changing material design version!");
+    final newIndex =
+        (_availableThemes.indexOf(_theme) + 1) % _availableThemes.length;
+    _set(_availableThemes[newIndex]);
+  }
+}
+
+class AppDomainState extends ChangeNotifier {
   int _counter = 0;
 
   int get counter => _counter;
@@ -33,25 +86,34 @@ void initLogging() {
 }
 
 class AppUi extends StatelessWidget {
+  const AppUi({super.key});
+
   @override
   Widget build(BuildContext context) {
     log.info("build $this");
     return Scaffold(
-      appBar: createAppBar(appTitle), // should not rebuild
+      appBar: createAppBar(context, appTitle), // should not rebuild
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             makeText(),
-            observe<AppState>((state) => Text(
+            observe<AppDomainState>((state) => Text(
                   '${state.counter}',
                   style: Theme.of(context).textTheme.headlineMedium,
                 )),
+            ElevatedButton(
+              onPressed: modify<AppThemeState>(context, (d) => d.toggle()),
+              child: const Text("Change material design version"),
+            ),
+            observe<AppThemeState>((theme) => Text(
+                "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: modify<AppState>(context, (state) => state.increment()),
+        onPressed:
+            modify<AppDomainState>(context, (state) => state.increment()),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
@@ -59,10 +121,12 @@ class AppUi extends StatelessWidget {
   }
 }
 
-AppBar createAppBar(String title) {
+AppBar createAppBar(BuildContext context, String title) {
   log.info("Created app bar");
   return AppBar(
     title: Text(title),
+    // backgroundColor: Theme.of(context).colorScheme.background,
+    //  foregroundColor: Theme.of(context).colorScheme.onBackground,
   );
 }
 
