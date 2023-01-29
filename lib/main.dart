@@ -7,9 +7,7 @@ final log = Logger(appTitle);
 
 void main() {
   initLogging();
-  final themeState = AppThemeState();
-  final domainState = AppDomainState();
-  runApp(AppBootstrapper(themeState, domainState));
+  runApp(AppBootstrapper(AppThemeState(), AppDomainState()));
 }
 
 class AppBootstrapper extends StatelessWidget {
