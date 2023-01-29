@@ -122,8 +122,7 @@ class AppUi extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed:
-            modify<AppDomainState>(context, (state) => state.increment()),
+        onPressed: modify<AppDomainState>(context, (s) => s.increment()),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
