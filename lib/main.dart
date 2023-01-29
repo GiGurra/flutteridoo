@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutteridoo/state_binding.dart';
 import 'package:logging/logging.dart';
-import 'package:provider/provider.dart';
 
 const appTitle = 'Bonk!';
 final log = Logger(appTitle);
@@ -99,7 +96,6 @@ class AppUi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     log.info("build $this@${identityHashCode(this)}");
-    //sleep(const Duration(seconds: 1));
     return Scaffold(
       appBar: createAppBar(context, appTitle), // should not rebuild
       body: Center(
