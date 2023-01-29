@@ -6,8 +6,8 @@ Widget bind<TState extends ChangeNotifier, TUi extends Widget>(
   return ChangeNotifierProvider.value(value: state, child: child);
 }
 
-Widget observe<T>(Widget Function(T) callback) {
-  return Consumer<T>(builder: (context, model, child) => callback(model));
+Widget observe<T>(Widget Function(BuildContext, T) callback) {
+  return Consumer<T>(builder: (context, model, child) => callback(context, model));
 }
 
 void Function() modify<T>(BuildContext context, void Function(T) callback) {

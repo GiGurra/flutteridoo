@@ -33,7 +33,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     log.info("building App");
 
-    return observe<AppThemeState>((theme) {
+    return observe<AppThemeState>((context, theme) {
       log.info("building MaterialApp");
       final ui = AppUi();
       return MaterialApp(
@@ -84,6 +84,13 @@ class AppDomainState extends ChangeNotifier {
   }
 }
 
+void initLogging() {
+  Logger.root.onRecord.listen((record) {
+    // ignore: avoid_print
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
+}
+
 class AppUi extends StatelessWidget {
   AppUi({super.key}) {
     log.info("Made new instance $this@${identityHashCode(this)}");
@@ -94,24 +101,30 @@ class AppUi extends StatelessWidget {
     log.info("build $this@${identityHashCode(this)}");
     //sleep(const Duration(seconds: 1));
     return Scaffold(
-      appBar: AppBar(title: const Text(appTitle)),
+      appBar: createAppBar(context, appTitle), // should not rebuild
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            observe<AppDomainState>((state) => Text('${state.counter}')),
+            makeText(),
+            observe<AppDomainState>(
+              (context, state) => Text(
+                '${state.counter}',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
             ElevatedButton(
-              onPressed: modify<AppThemeState>(context, (s) => s.toggle()),
+              onPressed: modify<AppThemeState>(context, (d) => d.toggle()),
               child: const Text("Change material design version"),
             ),
-            observe<AppThemeState>((theme) => Text(
+            observe<AppThemeState>((context, theme) => Text(
                 "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<AppDomainState>().increment(),
+        onPressed:
+            modify<AppDomainState>(context, (state) => state.increment()),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
@@ -119,9 +132,14 @@ class AppUi extends StatelessWidget {
   }
 }
 
-void initLogging() {
-  Logger.root.onRecord.listen((record) {
-    // ignore: avoid_print
-    print('${record.level.name}: ${record.time}: ${record.message}');
-  });
+AppBar createAppBar(BuildContext context, String title) {
+  log.info("Created app bar");
+  return AppBar(
+    title: Text(title),
+  );
+}
+
+Text makeText() {
+  log.info("made text");
+  return const Text('You have pushed the button this many times:');
 }
