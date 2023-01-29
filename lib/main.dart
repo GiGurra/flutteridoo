@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutteridoo/state_binding.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
@@ -21,16 +22,9 @@ class AppBootstrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     log.info("building AppBootstrapper");
-    return ChangeNotifierProvider<AppThemeState>.value(
-      value: themeState,
-      builder: (_, __) => ChangeNotifierProvider<AppDomainState>.value(
-        value: domainState,
-        builder: (_, __) => const App(),
-      ),
-    );
+    return bind(themeState, bind(domainState, const App()));
   }
 }
-
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -39,7 +33,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     log.info("building App");
 
-    return Consumer<AppThemeState>(builder: (_, theme, __) {
+    return observe<AppThemeState>((theme) {
       log.info("building MaterialApp");
       final ui = AppUi();
       return MaterialApp(
@@ -106,15 +100,13 @@ class AppUi extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
-            Consumer<AppDomainState>(
-                builder: (_, state, __) => Text('${state.counter}')),
+            observe<AppDomainState>((state) => Text('${state.counter}')),
             ElevatedButton(
-              onPressed: () => context.read<AppThemeState>().toggle(),
+              onPressed: modify<AppThemeState>(context, (s) => s.toggle()),
               child: const Text("Change material design version"),
             ),
-            Consumer<AppThemeState>(
-                builder: (_, theme, __) => Text(
-                    "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
+            observe<AppThemeState>((theme) => Text(
+                "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
           ],
         ),
       ),

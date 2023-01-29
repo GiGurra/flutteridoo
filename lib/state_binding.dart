@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 Widget bind<TState extends ChangeNotifier, TUi extends Widget>(
-    TState state, TUi Function() uiCtor) {
-  return ChangeNotifierProvider.value(value: state, child: uiCtor());
+    TState state, TUi child) {
+  return ChangeNotifierProvider.value(value: state, child: child);
 }
 
 Widget observe<T>(Widget Function(T) callback) {
