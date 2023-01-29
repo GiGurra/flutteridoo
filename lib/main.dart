@@ -9,26 +9,7 @@ void main() {
   initLogging();
   final themeState = AppThemeState();
   final domainState = AppDomainState();
-  runApp(bind(themeState, bind(domainState, const App())));
-}
-
-class App extends StatelessWidget {
-  const App({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    log.info("building App");
-
-    return observe<AppThemeState>((context, theme) {
-      log.info("building MaterialApp");
-      final ui = AppUi();
-      return MaterialApp(
-        title: appTitle,
-        theme: theme.theme,
-        home: ui,
-      );
-    });
-  }
+  runApp(bind(themeState, bind(domainState, AppUi())));
 }
 
 class AppThemeState extends ChangeNotifier {
@@ -88,34 +69,41 @@ class AppUi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     log.info("build $this@${identityHashCode(this)}");
-    return Scaffold(
-      appBar: createAppBar(context, appTitle), // should not rebuild
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            makeText(),
-            observe<AppDomainState>(
-              (context, state) => Text(
-                '${state.counter}',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+    return observe<AppThemeState>((context, theme) {
+      log.info("building MaterialApp");
+      return MaterialApp(
+        title: appTitle,
+        theme: theme.theme,
+        home: Scaffold(
+          appBar: createAppBar(context, appTitle), // should not rebuild
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                makeText(),
+                observe<AppDomainState>(
+                  (context, state) => Text(
+                    '${state.counter}',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: modify<AppThemeState>(context, (d) => d.toggle()),
+                  child: const Text("Change material design version"),
+                ),
+                observe<AppThemeState>((context, theme) => Text(
+                    "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
+              ],
             ),
-            ElevatedButton(
-              onPressed: modify<AppThemeState>(context, (d) => d.toggle()),
-              child: const Text("Change material design version"),
-            ),
-            observe<AppThemeState>((context, theme) => Text(
-                "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
-          ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: modify<AppDomainState>(context, (s) => s.increment()),
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: modify<AppDomainState>(context, (s) => s.increment()),
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
+      );
+    });
   }
 }
 
