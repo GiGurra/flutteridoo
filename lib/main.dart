@@ -7,11 +7,21 @@ final log = Logger(appTitle);
 
 void main() {
   initLogging();
-  runApp(bind(AppThemeState(), bind(AppDomainState(), AppUi())));
+  runApp(const App());
+}
+
+// Separated to this class to allow full app hot reload
+class App extends StatelessWidget {
+  const App({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return bind(AppThemeState(), bind(AppDomainState(), AppUi()));
+  }
 }
 
 class AppThemeState extends ChangeNotifier {
-  final List<ThemeData> _availableThemes = [
+  final _availableThemes = [
     ThemeData.light().copyWith(useMaterial3: true),
     ThemeData.dark().copyWith(useMaterial3: true),
     ThemeData.light().copyWith(useMaterial3: false),
@@ -80,17 +90,25 @@ class AppUi extends StatelessWidget {
               children: <Widget>[
                 makeText(),
                 observe<AppDomainState>(
-                  (context, state) => Text(
-                    '${state.counter}',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
+                      (context, state) =>
+                      Text(
+                        '${state.counter}',
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .headlineMedium,
+                      ),
                 ),
                 ElevatedButton(
                   onPressed: modify<AppThemeState>(context, (d) => d.toggle()),
                   child: const Text("Change material design version"),
                 ),
-                observe<AppThemeState>((context, theme) => Text(
-                    "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
+                observe<AppThemeState>((context, theme) =>
+                    Text(
+                        "using brightness=${theme.theme
+                            .brightness}, matv=${theme.theme.useMaterial3
+                            ? "3"
+                            : "2"}")),
               ],
             ),
           ),
