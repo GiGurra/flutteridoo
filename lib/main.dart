@@ -103,12 +103,8 @@ class AppUi extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text("Hello Flutter!"),/*
-            Consumer<AppDomainState>(
-                builder: (_, state, __) => Text(
-                      '${state.counter}',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    )),*/
+            const Text("Hello Flutter!"),
+            const Text('1'),
             ElevatedButton(
               onPressed: () => context.read<AppThemeState>().toggle(),
               child: const Text("Change material design version"),
