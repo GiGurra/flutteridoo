@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 Widget bind<TState extends ChangeNotifier, TUi extends Widget>(
     TState state, TUi Function() uiCtor) {
-  return ChangeNotifierProvider(create: (_) => state, child: uiCtor());
+  return ChangeNotifierProvider.value(value: state, child: uiCtor());
 }
 
 Widget observe<T>(Widget Function(T) callback) {

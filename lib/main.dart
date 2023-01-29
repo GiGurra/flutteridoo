@@ -32,10 +32,11 @@ class App extends StatelessWidget {
 
     return observe<AppThemeState>((theme) {
       log.info("building MaterialApp");
+      final ui = AppUi();
       return MaterialApp(
         title: appTitle,
         theme: theme.theme,
-        home: const AppUi(),
+        home: ui,
       );
     });
   }
@@ -43,6 +44,22 @@ class App extends StatelessWidget {
 
 class AppThemeState extends ChangeNotifier {
   final List<ThemeData> _availableThemes = [
+    ThemeData.light().copyWith(useMaterial3: true),
+    ThemeData.dark().copyWith(useMaterial3: true),
+    ThemeData.light().copyWith(useMaterial3: false),
+    ThemeData.dark().copyWith(useMaterial3: false),
+    ThemeData.light().copyWith(useMaterial3: true),
+    ThemeData.dark().copyWith(useMaterial3: true),
+    ThemeData.light().copyWith(useMaterial3: false),
+    ThemeData.dark().copyWith(useMaterial3: false),
+    ThemeData.light().copyWith(useMaterial3: true),
+    ThemeData.dark().copyWith(useMaterial3: true),
+    ThemeData.light().copyWith(useMaterial3: false),
+    ThemeData.dark().copyWith(useMaterial3: false),
+    ThemeData.light().copyWith(useMaterial3: true),
+    ThemeData.dark().copyWith(useMaterial3: true),
+    ThemeData.light().copyWith(useMaterial3: false),
+    ThemeData.dark().copyWith(useMaterial3: false),
     ThemeData.light().copyWith(useMaterial3: true),
     ThemeData.dark().copyWith(useMaterial3: true),
     ThemeData.light().copyWith(useMaterial3: false),
@@ -87,11 +104,13 @@ void initLogging() {
 }
 
 class AppUi extends StatelessWidget {
-  const AppUi({super.key});
+  AppUi({super.key}) {
+    log.info("Made new instance $this@${identityHashCode(this)}");
+  }
 
   @override
   Widget build(BuildContext context) {
-    log.info("build $this");
+    log.info("build $this@${identityHashCode(this)}");
     return Scaffold(
       appBar: createAppBar(context, appTitle), // should not rebuild
       body: Center(
@@ -99,28 +118,22 @@ class AppUi extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             makeText(),
-            observe<AppDomainState>((state) =>
-                Text(
+            observe<AppDomainState>((state) => Text(
                   '${state.counter}',
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .headlineMedium,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 )),
             ElevatedButton(
               onPressed: modify<AppThemeState>(context, (d) => d.toggle()),
               child: const Text("Change material design version"),
             ),
-            observe<AppThemeState>((theme) =>
-                Text(
-                    "using brightness=${theme.theme.brightness}, matv=${theme
-                        .theme.useMaterial3 ? "3" : "2"}")),
+            observe<AppThemeState>((theme) => Text(
+                "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed:
-        modify<AppDomainState>(context, (state) => state.increment()),
+            modify<AppDomainState>(context, (state) => state.increment()),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
