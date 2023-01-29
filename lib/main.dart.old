@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutteridoo/state_binding.dart';
 import 'package:logging/logging.dart';
-import 'package:provider/provider.dart';
 
 const appTitle = 'Bonk!';
 final log = Logger(appTitle);
@@ -21,13 +21,7 @@ class AppBootstrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     log.info("building AppBootstrapper");
-    return ChangeNotifierProvider<AppThemeState>.value(
-      value: themeState,
-      builder: (_, __) => ChangeNotifierProvider<AppDomainState>.value(
-        value: domainState,
-        builder: (_, __) => const App(),
-      ),
-    );
+    return bind(themeState, () => bind(domainState, App.new));
   }
 }
 
@@ -38,7 +32,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     log.info("building App");
 
-    return Consumer<AppThemeState>(builder: (_, theme, __) {
+    return observe<AppThemeState>((theme) {
       log.info("building MaterialApp");
       final ui = AppUi();
       return MaterialApp(
@@ -70,7 +64,6 @@ class AppThemeState extends ChangeNotifier {
   }
 
   void toggle() {
-    log.info("---------------------------------");
     log.info("Changing material design version!");
     final newIndex =
         (_availableThemes.indexOf(_theme) + 1) % _availableThemes.length;
@@ -104,33 +97,44 @@ class AppUi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     log.info("build $this@${identityHashCode(this)}");
-    //sleep(const Duration(seconds: 1));
     return Scaffold(
+      appBar: createAppBar(context, appTitle), // should not rebuild
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text("Hello Flutter!"),/*
-            Consumer<AppDomainState>(
-                builder: (_, state, __) => Text(
-                      '${state.counter}',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    )),*/
+            makeText(),
+            observe<AppDomainState>((state) => Text(
+                  '${state.counter}',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                )),
             ElevatedButton(
-              onPressed: () => context.read<AppThemeState>().toggle(),
+              onPressed: modify<AppThemeState>(context, (d) => d.toggle()),
               child: const Text("Change material design version"),
             ),
-            Consumer<AppThemeState>(
-                builder: (_, theme, __) => Text(
-                    "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
+            observe<AppThemeState>((theme) => Text(
+                "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<AppDomainState>().increment(),
+        onPressed:
+            modify<AppDomainState>(context, (state) => state.increment()),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
     );
   }
+}
+
+AppBar createAppBar(BuildContext context, String title) {
+  log.info("Created app bar");
+  return AppBar(
+    title: Text(title),
+  );
+}
+
+Text makeText() {
+  log.info("made text");
+  return const Text('You have pushed the button this many times:');
 }
