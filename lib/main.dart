@@ -49,8 +49,11 @@ class AppThemeState extends ChangeNotifier {
     ThemeData.light().copyWith(useMaterial3: false),
     ThemeData.dark().copyWith(useMaterial3: false),
   ];
+  late ThemeData _theme;
 
-  ThemeData _theme = ThemeData.light().copyWith(useMaterial3: true);
+  AppThemeState() {
+    _theme = _availableThemes.first;
+  }
 
   ThemeData get theme => _theme;
 
