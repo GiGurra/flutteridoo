@@ -31,6 +31,7 @@ class AppBootstrapper extends StatelessWidget {
   }
 }
 
+
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -99,12 +100,14 @@ class AppUi extends StatelessWidget {
     log.info("build $this@${identityHashCode(this)}");
     //sleep(const Duration(seconds: 1));
     return Scaffold(
+      appBar: AppBar(title: const Text(appTitle)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text("Hello Flutter!"),
-            const Text('1'),
+            const Text('You have pushed the button this many times:'),
+            Consumer<AppDomainState>(
+                builder: (_, state, __) => Text('${state.counter}')),
             ElevatedButton(
               onPressed: () => context.read<AppThemeState>().toggle(),
               child: const Text("Change material design version"),
