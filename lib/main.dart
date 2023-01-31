@@ -90,25 +90,17 @@ class AppUi extends StatelessWidget {
               children: <Widget>[
                 makeText(),
                 observe<AppDomainState>(
-                      (context, state) =>
-                      Text(
-                        '${state.counter}',
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .headlineMedium,
-                      ),
+                  (context, state) => Text(
+                    '${state.counter}',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: modify<AppThemeState>(context, (d) => d.toggle()),
                   child: const Text("Change material design version"),
                 ),
-                observe<AppThemeState>((context, theme) =>
-                    Text(
-                        "using brightness=${theme.theme
-                            .brightness}, matv=${theme.theme.useMaterial3
-                            ? "3"
-                            : "2"}")),
+                observe<AppThemeState>((context, theme) => Text(
+                    "using brightness=${theme.theme.brightness}, matv=${theme.theme.useMaterial3 ? "3" : "2"}")),
               ],
             ),
           ),
